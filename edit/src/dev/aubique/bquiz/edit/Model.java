@@ -13,12 +13,14 @@ public class Model {
 
     public void addQuestion(String question) {
         int id = questionList.size() - 1;
+        questionObj = new Question(0, question);
         // TODO: figure out shall we assign id or list would do his job?
-        questionList.add(new Question(id, question));
+        questionList.add(questionObj);
     }
 
     public void replaceQuestion(int id, String question) {
-        questionList.set(id, new Question(id, question));
+        questionObj = new Question(id, question);
+        questionList.set(id, questionObj);
     }
 
     public Question getQuestionObj() {
