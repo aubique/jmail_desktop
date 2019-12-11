@@ -8,19 +8,27 @@ public class Model {
     private Question questionObj;
     private List<Question> questionList = new ArrayList<>();
 
-    public Model() {
-    }
-
-    public void addQuestion(String question) {
-        int id = questionList.size() - 1;
-        questionObj = new Question(0, question);
-        // TODO: figure out shall we assign id or list would do his job?
+    public void addQuestion(Question questionToAdd) {
+        this.questionObj = questionToAdd;
+        questionObj.setId(questionList.size());
         questionList.add(questionObj);
     }
 
-    public void replaceQuestion(int id, String question) {
-        questionObj = new Question(id, question);
-        questionList.set(id, questionObj);
+    public void updateQuestion(Question question) throws NotSelectedException {
+        this.questionObj = question;
+        try {
+            questionList.set(questionObj.getId(), questionObj);
+        } catch (IndexOutOfBoundsException e) {
+            throw new NotSelectedException("Select an item to edit", e);
+        }
+    }
+
+    public void removeQuestionAt(int indexSelected) throws NotSelectedException {
+        try {
+            questionList.remove(indexSelected);
+        } catch (IndexOutOfBoundsException e) {
+            throw new NotSelectedException("Select an item to remove", e);
+        }
     }
 
     public Question getQuestionObj() {

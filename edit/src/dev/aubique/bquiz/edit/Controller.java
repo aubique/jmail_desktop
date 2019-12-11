@@ -9,55 +9,95 @@ public class Controller {
 
     private Model model;
     private View view;
-    private DefaultListModel<String> jListModel = new DefaultListModel<>();
-    private String questionInput;
+    private DefaultListModel<String> defaultQuestionList = new DefaultListModel<>();
+    private String questionInput, correctAnswerInput;
 
     public Controller(Model model, View view) {
         this.model = model;
         this.view = view;
-        view.getQuestionJList().setModel(jListModel);
+        view.getQuestionJList().setModel(defaultQuestionList);
         view.getAddButton().addActionListener(new addButtonHandler());
-        view.getConfirmButton().addActionListener(new confirmButtonHandler());
         view.getQuestionJList().addListSelectionListener(new listSelectionHandler());
+        view.getEditButton().addActionListener(new editButtonHandler());
+        view.getDeleteButton().addActionListener(new deleteButtonHandler());
+        view.getExitButton().addActionListener(new exitButtonHandler());
     }
 
-    private String extractQuestionString() {
-        // Index is required to refer item in model list of (ArrayList)<Question>
+    private Question getTextFields() {
         int indexSelected = view.getQuestionJList().getSelectedIndex();
-        // Go through Model->ArrayList->Question->String
-        // TODO: Refine code here for better encapsulation
-        return model.getQuestionList().get(indexSelected).getQuestion();
+        String questionInput = view.getQuestionTextField().getText();
+        String correctAnswerInput = view.getCorrectAnswerTextField().getText();
+        return new Question(indexSelected, questionInput, correctAnswerInput);
+    }
+
+    private void setTextFields(int index) throws NotSelectedException {
+        try {
+            Question selectedQuestion;
+            selectedQuestion = model.getQuestionList().get(index);
+            view.getQuestionTextField().setText(selectedQuestion.getQuestion());
+            view.getCorrectAnswerTextField().setText(selectedQuestion.getAnswer());
+        } catch (IndexOutOfBoundsException e) {
+            throw new NotSelectedException("Item is deleted, select the new one", e);
+        }
     }
 
     class addButtonHandler extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            questionInput = view.getQuestionTextField().getText();
-            model.addQuestion(questionInput);//TODO - add more fields
+            model.addQuestion(getTextFields());
             // No need to go down Question's properties since we use only one
-            jListModel.addElement(model.toString());
-        }
-    }
-
-    class confirmButtonHandler extends AbstractAction {
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            // TODO: Shall we make Model abstract to work along with Question's properties?
-            // It needs index to replace item on its initial place in the lists
-            int indexSelected = view.getQuestionJList().getSelectedIndex();
-            // Get input from View text field
-            // TODO: Make a method to get values from every field
-            questionInput = view.getQuestionTextField().getText();
-            // Replace items in DefaultListModel and Question/DB
-            model.replaceQuestion(indexSelected, questionInput);
-            jListModel.setElementAt(questionInput, indexSelected);
+            defaultQuestionList.addElement(model.toString());
         }
     }
 
     class listSelectionHandler implements ListSelectionListener {
         @Override
         public void valueChanged(ListSelectionEvent listSelectionEvent) {
-            view.getQuestionTextField().setText(extractQuestionString());
+            int indexSelected = view.getQuestionJList().getSelectedIndex();
+            try {
+                setTextFields(indexSelected);
+            } catch (NotSelectedException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    class editButtonHandler extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            // TODO: Refine code for better reusability
+            // TODO: Think of methods getQustionInput() and getIndexSelected()
+            // It needs index to replace item on its initial place in the lists
+            int indexSelected = view.getQuestionJList().getSelectedIndex();
+            // Get the field required for DefaultListModel
+            questionInput = view.getQuestionTextField().getText();
+            // Replace question in Model and question String in DefaultListModel
+            try {
+                model.updateQuestion(getTextFields());
+                defaultQuestionList.setElementAt(questionInput, indexSelected);
+            } catch (NotSelectedException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    class deleteButtonHandler extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            int indexSelected = view.getQuestionJList().getSelectedIndex();
+            try {
+                model.removeQuestionAt(indexSelected);
+                defaultQuestionList.removeElementAt(indexSelected);
+            } catch (NotSelectedException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    class exitButtonHandler extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.exit(0);
         }
     }
 }
