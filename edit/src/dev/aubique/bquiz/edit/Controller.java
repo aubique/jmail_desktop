@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -21,6 +22,16 @@ public class Controller {
         view.getEditButton().addActionListener(new editButtonHandler());
         view.getDeleteButton().addActionListener(new deleteButtonHandler());
         view.getExitButton().addActionListener(new exitButtonHandler());
+    }
+
+    public void initController() {
+        // Fill out model.questionList with (Question)objects
+        model.loadQuestionListFromDatabase();
+        // Fill out DefaultQuestionList by retrieving (String)question
+        model.getQuestionList().stream()
+                .map(Question::getQuestion)
+                .collect(Collectors.toList())
+                .forEach(defaultQuestionList::addElement);
     }
 
     private Question getTextFields() {

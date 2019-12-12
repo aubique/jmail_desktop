@@ -1,5 +1,6 @@
 package dev.aubique.bquiz.edit;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,27 @@ public class Model {
 
     private Question questionObj;
     private List<Question> questionList = new ArrayList<>();
+    private ConnectionJdbc database;
+
+    public Model() {
+        try {
+            this.database = new ConnectionJdbc();
+            database.createDatabase();
+        } catch (SQLException e) {
+            System.out.println("Connection failed");
+            //TODO throw new ConnectionException();
+        }
+    }
+
+    public void loadQuestionListFromDatabase() {
+        List<List<String>> rows = database.selectAllRows();
+        for (List<String> row : rows) {
+            int id = Integer.parseInt(row.get(0));
+            String question = row.get(1);
+            String correct = row.get(2);
+            addQuestion(new Question(id, question, correct));
+        }
+    }
 
     public void addQuestion(Question questionToAdd) {
         this.questionObj = questionToAdd;
@@ -31,20 +53,8 @@ public class Model {
         }
     }
 
-    public Question getQuestionObj() {
-        return questionObj;
-    }
-
-    public void setQuestionObj(Question questionObj) {
-        this.questionObj = questionObj;
-    }
-
     public List<Question> getQuestionList() {
         return questionList;
-    }
-
-    public void setQuestionList(List<Question> questionList) {
-        this.questionList = questionList;
     }
 
     @Override
