@@ -1,5 +1,11 @@
 package dev.aubique.bquiz.edit;
 
+import java.io.Externalizable;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Question {
 
     private int id;
@@ -14,6 +20,16 @@ public class Question {
         this.id = id;
         this.question = question;
         this.answer = answer;
+    }
+
+    public Question(int id, List<String> properties) {
+        this.id = id;
+        this.question = properties.get(0);
+        this.answer = properties.get(1);
+    }
+
+    public List<String> getProperties() {
+        return new ArrayList<String>(Arrays.asList(question, answer));
     }
 
     public int getId() {

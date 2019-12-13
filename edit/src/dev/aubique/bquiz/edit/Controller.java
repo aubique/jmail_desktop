@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -24,9 +27,9 @@ public class Controller {
         view.getExitButton().addActionListener(new exitButtonHandler());
     }
 
-    public void initController() {
+    public void loadQuestionList() {
         // Fill out model.questionList with (Question)objects
-        model.loadQuestionListFromDatabase();
+        model.loadQuestionListFromDatabaseAsResultSet();
         // Fill out DefaultQuestionList by retrieving (String)question
         model.getQuestionList().stream()
                 .map(Question::getQuestion)
@@ -34,28 +37,40 @@ public class Controller {
                 .forEach(defaultQuestionList::addElement);
     }
 
-    private Question getTextFields() {
+    @Deprecated
+    public void saveQuestionList() {
+        // TODO: Send ModelView objects to Model->DAL
+        // TODO: To delete
+    }
+
+    private Question getTextFieldsAsQuestion() {
         int indexSelected = view.getQuestionJList().getSelectedIndex();
         String questionInput = view.getQuestionTextField().getText();
         String correctAnswerInput = view.getCorrectAnswerTextField().getText();
+        // TODO: Should (Question) be either BO or DTO/Beam?
         return new Question(indexSelected, questionInput, correctAnswerInput);
     }
 
+    private List<String> getTextFieldsAsList() {
+        String questionInput = view.getQuestionTextField().getText();
+        String correctAnswerInput = view.getCorrectAnswerTextField().getText();
+        return new ArrayList<>(Arrays.asList(questionInput, correctAnswerInput)); //TODO: Follow through the implementation
+    }
+
     private void setTextFields(int index) throws NotSelectedException {
-        try {
-            Question selectedQuestion;
-            selectedQuestion = model.getQuestionList().get(index);
-            view.getQuestionTextField().setText(selectedQuestion.getQuestion());
-            view.getCorrectAnswerTextField().setText(selectedQuestion.getAnswer());
-        } catch (IndexOutOfBoundsException e) {
-            throw new NotSelectedException("Item is deleted, select the new one", e);
+        if (index < 0) {
+            throw new NotSelectedException("");
         }
+        Question selectedQuestion;
+        selectedQuestion = model.getQuestionList().get(index);
+        view.getQuestionTextField().setText(selectedQuestion.getQuestion());
+        view.getCorrectAnswerTextField().setText(selectedQuestion.getAnswer());
     }
 
     class addButtonHandler extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            model.addQuestion(getTextFields());
+            model.addQuestion(getTextFieldsAsList());
             // No need to go down Question's properties since we use only one
             defaultQuestionList.addElement(model.toString());
         }
@@ -65,6 +80,7 @@ public class Controller {
         @Override
         public void valueChanged(ListSelectionEvent listSelectionEvent) {
             int indexSelected = view.getQuestionJList().getSelectedIndex();
+            System.out.println(indexSelected);
             try {
                 setTextFields(indexSelected);
             } catch (NotSelectedException e) {
@@ -77,14 +93,14 @@ public class Controller {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             // TODO: Refine code for better reusability
-            // TODO: Think of methods getQustionInput() and getIndexSelected()
+            // TODO: Do think of methods getQustionInput() and getIndexSelected()
             // It needs index to replace item on its initial place in the lists
             int indexSelected = view.getQuestionJList().getSelectedIndex();
             // Get the field required for DefaultListModel
             questionInput = view.getQuestionTextField().getText();
             // Replace question in Model and question String in DefaultListModel
-            try {
-                model.updateQuestion(getTextFields());
+            try { // TODO: Replace Exception with if(indexSelected>0)
+                model.updateQuestion(indexSelected, getTextFieldsAsList());
                 defaultQuestionList.setElementAt(questionInput, indexSelected);
             } catch (NotSelectedException e) {
                 System.out.println(e.getMessage());
@@ -108,6 +124,7 @@ public class Controller {
     class exitButtonHandler extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
+            model.saveQuestionListToDatabase();
             System.exit(0);
         }
     }
