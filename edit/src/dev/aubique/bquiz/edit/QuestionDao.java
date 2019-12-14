@@ -11,19 +11,15 @@ import java.util.Map;
 
 public class QuestionDao {
 
-    private static int lastIndex = 1;
     String table;
+    private int lastIndex = 1;
     private List<String> columnNames = new ArrayList<>();
 
-    public QuestionDao() throws SQLException {
+    public QuestionDao() {
     }
 
-    public static int getLastIndex() {
-        return lastIndex;
-    }
-
-    private static void updateLastIndexByResultSet(ResultSet resultSet) throws SQLException {
-        lastIndex = resultSet.getRow();
+    public int getLastIndex() {
+        return this.lastIndex;
     }
 
     public void createTable() {
@@ -51,46 +47,22 @@ public class QuestionDao {
         return columnNames;
     }
 
-    public List<List<String>> selectAllRowsAsRowList() {
-        List<List<String>> rows = new ArrayList<>();
-        List<String> row;
-        try (
-                Connection conn = MariaDbConnectionFactory.getConnection();
-                PreparedStatement ps = conn.prepareStatement(Utility.generateSelectAll(this.table));
-                ResultSet res = ps.executeQuery()
-        ) {
-            updateLastIndexByResultSet(res);
-            while (res.next()) {
-                row = new ArrayList<>();
-                // First column is always (int) primary key ID
-                row.add(String.valueOf(res.getInt(1)));
-                // The next columns are listed in columnNames
-                for (String fieldName : columnNames) {
-                    row.add(res.getString(fieldName));
-                }
-                rows.add(row);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return rows;
-    }
-
+    //TODO: Replace like selectAllQuestions() -> List<Question>
     public ResultSet selectAllRowsAsResultSet() {
         ResultSet res = null;
         try (
                 Connection conn = MariaDbConnectionFactory.getConnection();
-                PreparedStatement ps = conn.prepareStatement(Utility.generateSelectAll(this.table))
+                PreparedStatement ps = conn.prepareStatement(Utility.generateSelectAllQuery(this.table))
         ) {
             res = ps.executeQuery();
-            updateLastIndexByResultSet(res);
+            lastIndex = res.getRow();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
 
+    //TODO: Refactor like addQuestion(Question q) -> None
     public void addQuestion(List<String> properties) {
         Map<String, String> row = Utility.generateDict(columnNames, properties);
         try (
@@ -98,6 +70,7 @@ public class QuestionDao {
                 PreparedStatement ps = conn.prepareStatement(Utility.generateInsertQuery(this.table, row))
         ) {
             ps.execute();
+            this.lastIndex++;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -108,16 +81,25 @@ public class QuestionDao {
         Map<String, String> row = Utility.generateDict(columnNames, properties);
         try (
                 Connection conn = MariaDbConnectionFactory.getConnection();
-                PreparedStatement ps = conn.prepareStatement(Utility.generateUpdateQueryById(
-                        this.table, row, questionToReplace.getId()))
+                PreparedStatement ps = conn.prepareStatement(Utility.generateUpdateQueryById(this.table, row))
         ) {
-            ps.execute();
+            ps.setInt(1, questionToReplace.getId());
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void insertRow() {
+    public void deleteQuestion(int questionId) {
+        try (
+                Connection conn = MariaDbConnectionFactory.getConnection();
+                PreparedStatement ps = conn.prepareStatement(Utility.generateDeleteQueryById(this.table))
+        ) {
+            ps.setInt(1, questionId);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static class Utility {
@@ -133,6 +115,7 @@ public class QuestionDao {
             return map;
         }
 
+        //TODO: Do not put values in generator, leave it for PreparedStatement setter
         private static String generateCreateQuery(String table, Map<String, String> kwargs) {
             StringBuilder query = new StringBuilder();
 
@@ -146,35 +129,48 @@ public class QuestionDao {
             return query.toString();
         }
 
-        public static String generateSelectAll(String table) {
-            String query = "SELECT * FROM " + table + ";";
+        public static String generateSelectAllQuery(String table) {
+            String query = "SELECT * FROM " + table;
 
             System.out.println(query);
             return query;
         }
 
         public static String generateInsertQuery(String table, Map<String, String> kwargs) {
-            String columnString = String.format("INSERT INTO %s (", table);
-            String columnValues = " VALUES (";
+            String columnsQueryPart = String.format("INSERT INTO %s (", table);
+            String valuesQueryPart = " VALUES (";
 
             for (Map.Entry<String, String> entry : kwargs.entrySet()) {
-                columnString += entry.getKey() + ',';
-                columnValues += String.format("\"%s\",", entry.getValue().replaceAll("\"", "\'"));
+                columnsQueryPart += entry.getKey() + ',';
+                valuesQueryPart += String.format("\"%s\",", entry.getValue().replaceAll("\"", "'"));
             }
-            columnString = columnString.substring(0, columnString.length() - 1) + ')';
-            columnValues = columnValues.substring(0, columnValues.length() - 1) + ')';
+            columnsQueryPart = columnsQueryPart.substring(0, columnsQueryPart.length() - 1) + ')';
+            valuesQueryPart = valuesQueryPart.substring(0, valuesQueryPart.length() - 1) + ')';
 
-            System.out.println(columnString + columnValues);
-            return columnString + columnValues;
+            System.out.println(columnsQueryPart + valuesQueryPart);
+            return columnsQueryPart + valuesQueryPart;
         }
 
-        public static String generateUpdateQueryById(String table, Map<String, String> kwargs, int id) {
-            // TODO: Keep coding here
-            return "";
+        public static String generateUpdateQueryById(String table, Map<String, String> kwargs) {
+            List<String> valuesToUpdate = new ArrayList<>();
+            String query = String.format("UPDATE %s SET ", table);
+            kwargs.forEach((k, v) -> valuesToUpdate.add(String.format("%s=\"%s\"", k, v)));
+            query += String.join(",", valuesToUpdate);
+            query += " WHERE id=?";
+
+            System.out.println(query);
+            return query;
+        }
+
+        public static String generateDeleteQueryById(String table) {
+            String query = String.format("DELETE FROM %s WHERE id=?", table);
+
+            System.out.println(query);
+            return query;
         }
     }
 
-    private static class Options {
+    public static class Options {
 
         protected static final String QUESTIONS_TABLE = "questions";
         protected static final String ID_FIELD = "id";
@@ -186,14 +182,6 @@ public class QuestionDao {
 
         public static String getIdField() {
             return ID_FIELD;
-        }
-
-        public static String getQuestionField() {
-            return QUESTION_FIELD;
-        }
-
-        public static String getCorrectField() {
-            return CORRECT_FIELD;
         }
     }
 }

@@ -14,7 +14,6 @@ public class Controller {
     private Model model;
     private View view;
     private DefaultListModel<String> defaultQuestionList = new DefaultListModel<>();
-    private String questionInput, correctAnswerInput;
 
     public Controller(Model model, View view) {
         this.model = model;
@@ -37,34 +36,28 @@ public class Controller {
                 .forEach(defaultQuestionList::addElement);
     }
 
-    @Deprecated
-    public void saveQuestionList() {
-        // TODO: Send ModelView objects to Model->DAL
-        // TODO: To delete
-    }
-
-    private Question getTextFieldsAsQuestion() {
-        int indexSelected = view.getQuestionJList().getSelectedIndex();
-        String questionInput = view.getQuestionTextField().getText();
-        String correctAnswerInput = view.getCorrectAnswerTextField().getText();
-        // TODO: Should (Question) be either BO or DTO/Beam?
-        return new Question(indexSelected, questionInput, correctAnswerInput);
-    }
-
     private List<String> getTextFieldsAsList() {
         String questionInput = view.getQuestionTextField().getText();
         String correctAnswerInput = view.getCorrectAnswerTextField().getText();
-        return new ArrayList<>(Arrays.asList(questionInput, correctAnswerInput)); //TODO: Follow through the implementation
+        return new ArrayList<>(Arrays.asList(questionInput, correctAnswerInput));
     }
 
     private void setTextFields(int index) throws NotSelectedException {
         if (index < 0) {
             throw new NotSelectedException("");
         }
+        //TODO: Do think of refactoring with a iteration over List<TextField> with List<String>
         Question selectedQuestion;
         selectedQuestion = model.getQuestionList().get(index);
         view.getQuestionTextField().setText(selectedQuestion.getQuestion());
         view.getCorrectAnswerTextField().setText(selectedQuestion.getAnswer());
+    }
+
+    static class exitButtonHandler extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            System.exit(0);
+        }
     }
 
     class addButtonHandler extends AbstractAction {
@@ -80,7 +73,7 @@ public class Controller {
         @Override
         public void valueChanged(ListSelectionEvent listSelectionEvent) {
             int indexSelected = view.getQuestionJList().getSelectedIndex();
-            System.out.println(indexSelected);
+//            System.out.println("JList index selected: " + indexSelected);
             try {
                 setTextFields(indexSelected);
             } catch (NotSelectedException e) {
@@ -89,17 +82,17 @@ public class Controller {
         }
     }
 
+    //TODO fix bug: Doesn't edit question after adding a new one
     class editButtonHandler extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            // TODO: Refine code for better reusability
-            // TODO: Do think of methods getQustionInput() and getIndexSelected()
+            // TODO: Do think of improving re-usability with getQuestionInput() and getIndexSelected()
             // It needs index to replace item on its initial place in the lists
             int indexSelected = view.getQuestionJList().getSelectedIndex();
+            if (indexSelected < 0) return;
             // Get the field required for DefaultListModel
-            questionInput = view.getQuestionTextField().getText();
-            // Replace question in Model and question String in DefaultListModel
-            try { // TODO: Replace Exception with if(indexSelected>0)
+            String questionInput = view.getQuestionTextField().getText();
+            try {
                 model.updateQuestion(indexSelected, getTextFieldsAsList());
                 defaultQuestionList.setElementAt(questionInput, indexSelected);
             } catch (NotSelectedException e) {
@@ -118,14 +111,6 @@ public class Controller {
             } catch (NotSelectedException e) {
                 System.out.println(e.getMessage());
             }
-        }
-    }
-
-    class exitButtonHandler extends AbstractAction {
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-            model.saveQuestionListToDatabase();
-            System.exit(0);
         }
     }
 }
