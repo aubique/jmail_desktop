@@ -20,7 +20,7 @@ public class Question {
         this(id, properties.get(0), properties.get(1));
     }
 
-    public List<String> getProperties() {
+    public List<String> getPropertiesAsList() {
         return new ArrayList<>(Arrays.asList(question, answer));
     }
 

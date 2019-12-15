@@ -28,14 +28,18 @@ public class Model {
                 for (String s : db.getColumnNames()) {
                     properties.add(rows.getString(s));
                 }
-                this.addQuestion(new Question(id, properties));
+                this.addQuestionToList(new Question(id, properties));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void addQuestion(Question questionToAdd) {
+    public void loadQuestions() {
+        questionList = db.selectAll();
+    }
+
+    public void addQuestionToList(Question questionToAdd) {
         this.questionObj = questionToAdd;
         questionList.add(questionObj);
     }
@@ -48,10 +52,12 @@ public class Model {
      * @param properties - Question's (String)properties except (int)ID
      */
     public void addQuestion(List<String> properties) {
+        db.incLastIndex();
         int lastIdIndex = db.getLastIndex();
         this.questionObj = new Question(lastIdIndex, properties);
+
         questionList.add(questionObj);
-        db.addQuestion(properties);
+        db.insertQuestion(questionObj);
     }
 
     public void updateQuestion(int jListId, List<String> properties) throws NotSelectedException {

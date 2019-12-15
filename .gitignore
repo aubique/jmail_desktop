@@ -1,7 +1,8 @@
 # IntelliJ user files
-.idea/$CACHE_FILE$
-.idea/workspace.xml
-.idea/tasks.xml
+*.idea/$CACHE_FILE$
+*.idea/workspace.xml
+*.idea/tasks.xml
+*.idea/dictionaries
 
 # Compiled files
 out/

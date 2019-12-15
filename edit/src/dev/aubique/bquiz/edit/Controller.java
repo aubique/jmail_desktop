@@ -28,7 +28,8 @@ public class Controller {
 
     public void loadQuestionList() {
         // Fill out model.questionList with (Question)objects
-        model.loadQuestionListFromDatabaseAsResultSet();
+//        model.loadQuestionListFromDatabaseAsResultSet();
+        model.loadQuestions();
         // Fill out DefaultQuestionList by retrieving (String)question
         model.getQuestionList().stream()
                 .map(Question::getQuestion)
