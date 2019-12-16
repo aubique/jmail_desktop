@@ -1,4 +1,4 @@
-package dev.aubique.bquiz.edit;
+package dev.aubique.bquiz;
 
 public class NotSelectedException extends Exception {
 

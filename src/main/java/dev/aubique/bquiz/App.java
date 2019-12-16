@@ -1,4 +1,8 @@
-package dev.aubique.bquiz.edit;
+package dev.aubique.bquiz;
+
+import dev.aubique.bquiz.model.Model;
+import dev.aubique.bquiz.viewcontroller.Controller;
+import dev.aubique.bquiz.viewcontroller.View;
 
 public class App {
     public static void main(String[] args) {
