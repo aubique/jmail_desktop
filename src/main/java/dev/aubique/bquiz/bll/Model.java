@@ -1,24 +1,39 @@
-package dev.aubique.bquiz.model;
+package dev.aubique.bquiz.bll;
 
-import dev.aubique.bquiz.NotSelectedException;
-import dev.aubique.bquiz.dal.DaoQuestion;
+import dev.aubique.bquiz.dal.DefaultDao;
+import dev.aubique.bquiz.dal.FactoryDao;
+import dev.aubique.bquiz.gui.NotSelectedException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Model component
- * Has yet to be covered by Service Layout to incapsulate Business Object
+ * Has yet to be covered by Service Layout to encapsulate Business Object
  */
 public class Model {
 
+    private static Model instance = null;
     private List<BoQuestion> boQuestionList = new ArrayList<>();
     private BoQuestion boQuestionObj;
-    private DaoQuestion db;
+    private DefaultDao<BoQuestion> db;
 
-    public Model() {
-        this.db = new DaoQuestion();
+    private Model() {
+        this.db = FactoryDao.getQuestionDao();
         db.createTable();
+    }
+
+    /**
+     * Singleton factory
+     *
+     * @return Instance of this class
+     */
+    public static Model getInstance() {
+        if (instance == null) {
+            instance = new Model();
+        }
+
+        return instance;
     }
 
     /**
@@ -47,7 +62,7 @@ public class Model {
         this.boQuestionObj = new BoQuestion(lastIdIndex, properties);
 
         boQuestionList.add(boQuestionObj);
-        db.insertQuestion(boQuestionObj);
+        db.insert(boQuestionObj);
     }
 
     /**
@@ -66,7 +81,7 @@ public class Model {
         int databaseId = boQuestionList.get(jListId).getId();
         this.boQuestionObj = new BoQuestion(databaseId, properties);
         boQuestionList.set(jListId, boQuestionObj);
-        db.updateQuestion(boQuestionObj);
+        db.update(boQuestionObj);
     }
 
     /**
@@ -81,7 +96,7 @@ public class Model {
         }
         int databaseId = boQuestionList.get(jListId).getId();
         boQuestionList.remove(jListId);
-        db.deleteQuestion(databaseId);
+        db.delete(databaseId);
     }
 
     public List<BoQuestion> getBoQuestionList() {
