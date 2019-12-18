@@ -1,8 +1,7 @@
-package dev.aubique.bquiz.viewcontroller;
+package dev.aubique.bquiz.gui;
 
-import dev.aubique.bquiz.NotSelectedException;
-import dev.aubique.bquiz.model.BoQuestion;
-import dev.aubique.bquiz.model.Model;
+import dev.aubique.bquiz.bll.BoQuestion;
+import dev.aubique.bquiz.bll.Model;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -34,7 +33,7 @@ public class Controller {
      * Fill out DefaultListModel by retrieving the question property from (Question) obj
      */
     public void loadQuestionList() {
-        // Fill out model.questionList with (Question)objects
+        // Fill out bll.questionList with (Question)objects
         model.loadQuestions();
         // Fill out DefaultQuestionList by retrieving (String)question
         model.getBoQuestionList().stream()
@@ -61,7 +60,7 @@ public class Controller {
      * Pair it with List<String> from Question.getProperties()
      *
      * @param selectedIndex Index for JList
-     * @throws NotSelectedException
+     * @throws NotSelectedException If item isn't selected yet herewith selectedIndex == -1
      */
     private void setTextFields(int selectedIndex) throws NotSelectedException {
         if (selectedIndex < 0) {
@@ -121,7 +120,7 @@ public class Controller {
     class editButtonHandler extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            // TODO: Do think of improving re-usability with getQuestionInput() and getIndexSelected()
+            // TODO: Do think of avoiding boilerplate code with getQuestionInput() and getIndexSelected()
             // It needs index to replace item on its initial place in the lists
             int indexSelected = view.getQuestionJList().getSelectedIndex();
             if (indexSelected < 0) return;
