@@ -1,8 +1,11 @@
-package dev.aubique.bquiz.edit;
+package dev.aubique.bquiz.gui;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class View {
+    public List<JTextField> textFieldList = new ArrayList<>();
     private JPanel mainPanel;
     private JButton editButton;
     private JButton addButton;
@@ -12,6 +15,9 @@ public class View {
     private JTextField correctAnswerTextField;
     private JButton deleteButton;
     private JButton exitButton;
+    private JTextField secondAnswerTextField;
+    private JTextField fourthAnswerTextField;
+    private JTextField thirdAnswerTextField;
 
     public View() {
         JFrame frame = new JFrame("View");
@@ -19,6 +25,12 @@ public class View {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+
+        textFieldList.add(questionTextField);
+        textFieldList.add(correctAnswerTextField);
+        textFieldList.add(secondAnswerTextField);
+        textFieldList.add(thirdAnswerTextField);
+        textFieldList.add(fourthAnswerTextField);
     }
 
     public JButton getEditButton() {
@@ -39,6 +51,18 @@ public class View {
 
     public JTextField getCorrectAnswerTextField() {
         return correctAnswerTextField;
+    }
+
+    public JTextField getSecondAnswerTextField() {
+        return secondAnswerTextField;
+    }
+
+    public JTextField getFourthAnswerTextField() {
+        return fourthAnswerTextField;
+    }
+
+    public JTextField getThirdAnswerTextField() {
+        return thirdAnswerTextField;
     }
 
     public JButton getDeleteButton() {

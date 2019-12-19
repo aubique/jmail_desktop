@@ -1,10 +1,16 @@
-# IntelliJ user files
-.idea/$CACHE_FILE$
-.idea/workspace.xml
-.idea/tasks.xml
+# IntelliJ files
+*.idea/
+*.iml
+
+# IntelliJ user customisation
+*.idea/dictionaries/
+*.idea/$CACHE_FILE$
+*.idea/workspace.xml
+*.idea/tasks.xml
 
 # Compiled files
 out/
+target/
 *.class
 
 # Log file
