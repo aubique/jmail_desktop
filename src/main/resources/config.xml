@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-<comment>These are properties</comment>
-<entry key="database">MariaDB</entry>
-<entry key="url">jdbc:mariadb://localhost:3306/devcolibri</entry>
-<entry key="username">idea</entry>
-<entry key="password">idea</entry>
-</properties>
