@@ -3,8 +3,10 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="325.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.jmail.controller.LoginWindowController">
+<AnchorPane prefHeight="325.0"
+            prefWidth="510.0"
+            xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <Button fx:id="errorLabel" layoutX="195.0" layoutY="244.0" mnemonicParsing="false" onAction="#loginButtonAction"
                 prefHeight="55.0" prefWidth="121.0" text="Login"/>

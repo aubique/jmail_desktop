@@ -3,16 +3,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
-<AnchorPane prefHeight="701.0" prefWidth="1060.0" xmlns="http://javafx.com/javafx/16"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jmail.controller.MainWindowController">
+<AnchorPane prefHeight="701.0"
+            prefWidth="1060.0"
+            xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <MenuBar prefHeight="29.0" prefWidth="1060.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                  AnchorPane.topAnchor="0.0">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Close"/>
                         <MenuItem mnemonicParsing="false" text="Open"/>
+                        <MenuItem mnemonicParsing="false" onAction="#closeAction" text="Close"/>
+                        <MenuItem mnemonicParsing="false" onAction="#addAccountAction" text="Add account"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
