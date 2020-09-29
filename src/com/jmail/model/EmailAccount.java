@@ -9,7 +9,6 @@ public class EmailAccount {
     private String password;
     private Properties properties;
     private Store store;
-
     public EmailAccount(String address, String password) {
         this.address = address;
         this.password = password;
@@ -21,6 +20,19 @@ public class EmailAccount {
         this.properties.put("mail.smtps.host", "smtp.gmail.com");
         this.properties.put("mail.smtps.auth", "true");
         this.properties.put("outgoingHost", "smtp.gmail.com");
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    @Deprecated
+    public char[] getPasswordAsCharArray() {
+        return password.toCharArray();
     }
 
     public Properties getProperties() {
