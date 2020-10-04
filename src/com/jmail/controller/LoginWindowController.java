@@ -5,7 +5,7 @@ import com.jmail.controller.services.LoginService;
 import com.jmail.model.EmailAccount;
 import com.jmail.view.ViewFactory;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class LoginWindowController extends BaseController {
 
     @FXML
-    private Button errorLabel;
+    private Label errorLabel;
 
     @FXML
     private TextField emailAddressField;
@@ -27,21 +27,27 @@ public class LoginWindowController extends BaseController {
 
     @FXML
     void loginButtonAction() {
+        System.out.println("loginButtonAction");
+
         if (areFieldsValid()) {
             final var emailAccount = new EmailAccount(emailAddressField.getText(), passwordField.getText());
             final var loginService = new LoginService(emailAccount, emailManager);
-            final var emailLoginResult = loginService.login();
 
-            switch (emailLoginResult) {
-                case SUCCESS:
-                    System.out.println("login successful!" + emailAccount);
-                    return;
-            }
+            loginService.start();
+            loginService.setOnSucceeded(event -> {
+                final EmailLoginResult emailLoginResult = loginService.getValue();
+                switch (emailLoginResult) {
+                    case SUCCESS:
+                        System.out.println("login successful!" + emailAccount);
+                        viewFactory.showMainWindow();
+                        final Stage stage = (Stage) errorLabel.getScene().getWindow();
+                        viewFactory.closeStage(stage);
+                        return;
+                }
+            });
         }
+
         System.out.println("loginButtonAction");
-        viewFactory.showMainWindow();
-        final Stage stage = (Stage) errorLabel.getScene().getWindow();
-        viewFactory.closeStage(stage);
     }
 
     private boolean areFieldsValid() {

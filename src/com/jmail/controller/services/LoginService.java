@@ -3,11 +3,13 @@ package com.jmail.controller.services;
 import com.jmail.EmailManager;
 import com.jmail.controller.EmailLoginResult;
 import com.jmail.model.EmailAccount;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 
 import javax.mail.*;
 
 
-public class LoginService {
+public class LoginService extends Service<EmailLoginResult> {
 
     EmailAccount emailAccount;
     EmailManager emailManager;
@@ -17,7 +19,7 @@ public class LoginService {
         this.emailManager = emailManager;
     }
 
-    public EmailLoginResult login() {
+    private EmailLoginResult login() {
         final var authenticator = new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -26,6 +28,7 @@ public class LoginService {
         };
 
         try {
+            Thread.sleep(16000);
             Session session = Session.getInstance(emailAccount.getProperties(), authenticator);
             Store store = session.getStore("imaps");
             store.connect(emailAccount.getProperties().getProperty("incomingHost"),
@@ -46,5 +49,15 @@ public class LoginService {
             return EmailLoginResult.FAILED_BY_UNEXPECTED_ERROR;
         }
         return EmailLoginResult.SUCCESS;
+    }
+
+    @Override
+    protected Task<EmailLoginResult> createTask() {
+        return new Task<EmailLoginResult>() {
+            @Override
+            protected EmailLoginResult call() throws Exception {
+                return login();
+            }
+        };
     }
 }

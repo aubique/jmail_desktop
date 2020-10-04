@@ -13,7 +13,8 @@ public class Launcher extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         final var viewFactory = new ViewFactory(new EmailManager());
-        viewFactory.showOptionsWindow();
+        // FIXME: control the window
+        viewFactory.showLoginWindow();
         viewFactory.updateStyles();
     }
 
