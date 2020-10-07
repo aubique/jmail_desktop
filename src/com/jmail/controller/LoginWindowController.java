@@ -5,12 +5,16 @@ import com.jmail.controller.services.LoginService;
 import com.jmail.model.EmailAccount;
 import com.jmail.view.ViewFactory;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class LoginWindowController extends BaseController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class LoginWindowController extends BaseController implements Initializable {
 
     @FXML
     private Label errorLabel;
@@ -43,6 +47,14 @@ public class LoginWindowController extends BaseController {
                         final Stage stage = (Stage) errorLabel.getScene().getWindow();
                         viewFactory.closeStage(stage);
                         return;
+                    case FAILED_BY_CREDENTIALS:
+                        errorLabel.setText("invalid credentials!");
+                        return;
+                    case FAILED_BY_UNEXPECTED_ERROR:
+                        errorLabel.setText("unexpected error!");
+                        return;
+                    default:
+                        return;
                 }
             });
         }
@@ -61,5 +73,11 @@ public class LoginWindowController extends BaseController {
         }
 
         return true;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        emailAddressField.setText("myopia49@gmail.com");
+        passwordField.setText("");
     }
 }
