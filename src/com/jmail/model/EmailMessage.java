@@ -7,7 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javax.mail.Message;
 import java.util.Date;
 
-public class EmailMessages {
+public class EmailMessage {
 
     private SimpleStringProperty subject;
     private SimpleStringProperty sender;
@@ -17,12 +17,12 @@ public class EmailMessages {
     private boolean isRead;
     private Message message;
 
-    public EmailMessages(String subject, String sender,
-                         String recepient, int size, Date date,
-                         boolean isRead, Message message) {
+    public EmailMessage(String subject, String sender,
+                        String recipient, int size, Date date,
+                        boolean isRead, Message message) {
         this.subject = new SimpleStringProperty(subject);
         this.sender = new SimpleStringProperty(sender);
-        this.recipient = new SimpleStringProperty(recepient);
+        this.recipient = new SimpleStringProperty(recipient);
         this.size = new SimpleIntegerProperty(size);
         this.isRead = isRead;
         this.message = message;
