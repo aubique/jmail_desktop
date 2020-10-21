@@ -50,4 +50,8 @@ public class EmailTreeItem<String> extends TreeItem<String> {
         else
             this.setValue(name);
     }
+
+    public ObservableList<EmailMessage> getEmailMessages() {
+        return this.emailMessages;
+    }
 }
