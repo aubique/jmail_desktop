@@ -22,7 +22,7 @@ public class EmailMessage {
         this.subject = new SimpleStringProperty(subject);
         this.sender = new SimpleStringProperty(sender);
         this.recipient = new SimpleStringProperty(recipient);
-        this.size = new SimpleObjectProperty<SizeInteger>(new SizeInteger(size));
+        this.size = new SimpleObjectProperty<>(new SizeInteger(size));
         this.isRead = isRead;
         this.message = message;
     }
