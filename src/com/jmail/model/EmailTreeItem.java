@@ -21,26 +21,35 @@ public class EmailTreeItem<String> extends TreeItem<String> {
         this.emailMessages = FXCollections.observableArrayList();
     }
 
-    public void addEmail(Message message) throws MessagingException {
-        boolean messageIsRead = message.getFlags().contains(Flags.Flag.SEEN);
+    public void addEmail(Message msg) throws MessagingException {
+        final EmailMessage emailMessage = fetchMessage(msg);
+        this.emailMessages.add(emailMessage);
+    }
+
+    public void addEmailToTop(Message msg) throws MessagingException {
+        final EmailMessage emailMessage = fetchMessage(msg);
+        this.emailMessages.add(0, emailMessage);
+    }
+
+    private EmailMessage fetchMessage(Message msg) throws MessagingException {
+        boolean messageIsRead = msg.getFlags().contains(Flags.Flag.SEEN);
         final var emailMessage = new EmailMessage(
-                message.getSubject(),
-                message.getFrom()[0].toString(),
-                message.getRecipients(MimeMessage.RecipientType.TO)[0].toString(),
-                message.getSize(),
-                message.getSentDate(),
+                msg.getSubject(),
+                msg.getFrom()[0].toString(),
+                msg.getRecipients(MimeMessage.RecipientType.TO)[0].toString(),
+                msg.getSize(),
+                msg.getSentDate(),
                 messageIsRead,
-                message
+                msg
         );
-        emailMessages.add(emailMessage);
         if (!messageIsRead)
             incrementMessageCount();
 
-        System.out.println("Added to " + name + " " + message.getSubject());
+        return emailMessage;
     }
 
     public void incrementMessageCount() {
-        unreadMessagesCount++;
+        this.unreadMessagesCount++;
         updateName();
     }
 

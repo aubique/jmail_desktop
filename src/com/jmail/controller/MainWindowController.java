@@ -62,7 +62,7 @@ public class MainWindowController extends BaseController implements Initializabl
 
     @FXML
     void closeAction() {
-        //TODO refactor the spaghetti
+        //FIXME refactor the spaghetti
         final Stage stage = (Stage) emailsTreeView.getScene().getWindow();
         viewFactory.closeStage(stage);
     }
