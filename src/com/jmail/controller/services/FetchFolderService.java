@@ -14,8 +14,8 @@ import java.util.List;
 
 public class FetchFolderService extends Service<Void> {
 
-    private final Store store;
-    private final EmailTreeItem<String> folderRoot;
+    private Store store;
+    private EmailTreeItem<String> folderRoot;
     private List<Folder> folderList;
 
     public FetchFolderService(Store store, EmailTreeItem<String> folderRoot, List<Folder> folderList) {
@@ -47,7 +47,7 @@ public class FetchFolderService extends Service<Void> {
             EmailTreeItem<String> emailTreeItem = new EmailTreeItem<>(folder.getName());
             folderRoot.getChildren().add(emailTreeItem);
             folderRoot.setExpanded(true);
-            fetchMessagesFolder(folder, emailTreeItem);
+            fetchMessagesInFolder(folder, emailTreeItem);
             addMessageListenerToFolder(folder, emailTreeItem);
 
             if (folder.getType() == Folder.HOLDS_FOLDERS) {
@@ -79,7 +79,7 @@ public class FetchFolderService extends Service<Void> {
         });
     }
 
-    private void fetchMessagesFolder(Folder folder, EmailTreeItem<String> emailTreeItem) {
+    private void fetchMessagesInFolder(Folder folder, EmailTreeItem<String> emailTreeItem) {
         final var fetchMessagesService = new Service() {
             @Override
             protected Task createTask() {

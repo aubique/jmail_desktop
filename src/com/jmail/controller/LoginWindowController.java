@@ -29,6 +29,10 @@ public class LoginWindowController extends BaseController implements Initializab
         super(emailManager, viewFactory, fxmlName);
     }
 
+    public static String getPasswordField() {
+        return System.getenv("PASS_FIELD");
+    }
+
     @FXML
     void loginButtonAction() {
         System.out.println("loginButtonAction");
@@ -81,7 +85,6 @@ public class LoginWindowController extends BaseController implements Initializab
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         emailAddressField.setText("myopia49@gmail.com");
-        passwordField.setText("");
-
+        passwordField.setText(getPasswordField());
     }
 }

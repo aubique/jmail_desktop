@@ -6,7 +6,6 @@ import com.jmail.model.EmailMessage;
 import com.jmail.model.EmailTreeItem;
 import com.jmail.model.SizeInteger;
 import com.jmail.view.ViewFactory;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
@@ -56,7 +55,7 @@ public class MainWindowController extends BaseController implements Initializabl
 
     @FXML
     void optionsAction() {
-        System.out.println("optionsAction");
+        System.out.println("optionsAction");//FIXME delsout
         viewFactory.showOptionsWindow();
     }
 
@@ -68,7 +67,8 @@ public class MainWindowController extends BaseController implements Initializabl
     }
 
     @FXML
-    void addAccountAction(ActionEvent event) {
+    void addAccountAction() {
+        System.out.println("addAccountAction");//FIXME delsout
         viewFactory.showLoginWindow();
     }
 
@@ -86,6 +86,11 @@ public class MainWindowController extends BaseController implements Initializabl
         emailsTreeView.setOnMouseClicked(event -> {
             final EmailMessage emailMessage = emailsTableView.getSelectionModel().getSelectedItem();
             if (emailMessage != null) {
+                emailManager.setSelectedMessage(emailMessage);
+
+                if (!emailMessage.isRead())
+                    emailManager.setRead();
+
                 messageRendererService.setEmailMessage(emailMessage);
                 messageRendererService.restart();
             }
@@ -100,7 +105,7 @@ public class MainWindowController extends BaseController implements Initializabl
         emailsTableView.setRowFactory(new Callback<TableView<EmailMessage>, TableRow<EmailMessage>>() {
             @Override
             public TableRow<EmailMessage> call(TableView<EmailMessage> param) {
-                return new TableRow<EmailMessage>() {
+                return new TableRow<>() {
                     @Override
                     protected void updateItem(EmailMessage item, boolean empty) {
                         super.updateItem(item, empty);
@@ -120,6 +125,7 @@ public class MainWindowController extends BaseController implements Initializabl
         emailsTreeView.setOnMouseClicked(e -> {
             EmailTreeItem<String> item = (EmailTreeItem<String>) emailsTreeView.getSelectionModel().getSelectedItem();
             if (item != null) {
+                emailManager.setSelectedFolder(item);
                 emailsTableView.setItems(item.getEmailMessages());
             }
         });

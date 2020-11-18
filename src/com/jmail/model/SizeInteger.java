@@ -2,7 +2,7 @@ package com.jmail.model;
 
 public class SizeInteger implements Comparable<SizeInteger> {
 
-    private int size;
+    private final int size;
 
     public SizeInteger(int size) {
         this.size = size;

@@ -8,13 +8,13 @@ import java.util.Date;
 
 public class EmailMessage {
 
-    private SimpleStringProperty subject;
-    private SimpleStringProperty sender;
-    private SimpleStringProperty recipient;
-    private SimpleObjectProperty<SizeInteger> size;
-    private SimpleObjectProperty<Date> date;
+    private final SimpleStringProperty subject;
+    private final SimpleStringProperty sender;
+    private final SimpleStringProperty recipient;
+    private final SimpleObjectProperty<SizeInteger> size;
+    private final SimpleObjectProperty<Date> date;
     private boolean isRead;
-    private Message message;
+    private final Message message;
 
     public EmailMessage(String subject, String sender,
                         String recipient, int size, Date date,
@@ -23,6 +23,7 @@ public class EmailMessage {
         this.sender = new SimpleStringProperty(sender);
         this.recipient = new SimpleStringProperty(recipient);
         this.size = new SimpleObjectProperty<>(new SizeInteger(size));
+        this.date = new SimpleObjectProperty<>(date);
         this.isRead = isRead;
         this.message = message;
     }

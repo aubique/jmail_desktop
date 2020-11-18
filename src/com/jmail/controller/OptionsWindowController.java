@@ -28,7 +28,7 @@ public class OptionsWindowController extends BaseController implements Initializ
     }
 
     @FXML
-    void applyButtonAction(ActionEvent event) {
+    void applyBtnAction() {
         viewFactory.setColorTheme(themePicker.getValue());
         viewFactory.setFontSize(FontSize.values()[(int) (fontSizePicker.getValue())]);
         viewFactory.updateStyles();
@@ -36,7 +36,7 @@ public class OptionsWindowController extends BaseController implements Initializ
 
     @FXML
     void cancelButtonAction(ActionEvent event) {
-        Stage stage = (Stage) fontSizePicker.getScene().getWindow();
+        final var stage = (Stage) fontSizePicker.getScene().getWindow();
         viewFactory.closeStage(stage);
     }
 
@@ -68,9 +68,8 @@ public class OptionsWindowController extends BaseController implements Initializ
                 return null;
             }
         });
-        fontSizePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
-            fontSizePicker.setValue(newVal.intValue());
-        });
+        fontSizePicker.valueProperty().addListener((obs, oldVal, newVal) ->
+                fontSizePicker.setValue(newVal.intValue()));
     }
 
     private void setUpThemePicker() {

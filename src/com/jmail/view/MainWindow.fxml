@@ -36,7 +36,7 @@
                    AnchorPane.leftAnchor="246.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="28.0">
             <columns>
                 <TableColumn fx:id="senderCol" prefWidth="84.0" text="Sender"/>
-                <TableColumn fx:id="" prefWidth="208.0" text="Subject"/>
+                <TableColumn fx:id="subjectCol" prefWidth="208.0" text="Subject"/>
                 <TableColumn fx:id="recipientCol" prefWidth="235.0" text="Recipient"/>
                 <TableColumn fx:id="sizeCol" prefWidth="123.0" text="Size"/>
                 <TableColumn fx:id="dateCol" prefWidth="140.0" text="Date"/>

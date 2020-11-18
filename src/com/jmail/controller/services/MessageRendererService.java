@@ -47,18 +47,18 @@ public class MessageRendererService extends Service {
     }
 
     private void loadMessage() throws MessagingException, IOException {
-        stringBuffer.setLength(0); //clears the SB
+        this.stringBuffer.setLength(0); //clears the SB
         final Message message = emailMessage.getMessage();
         String contentType = message.getContentType();
         if (isSimpleType(contentType))
-            stringBuffer.append(message.getContent().toString());
+            this.stringBuffer.append(message.getContent().toString());
         else if (isMultipartType(contentType)) {
-            final Multipart multipart = (Multipart) message.getContent();
+            final var multipart = (Multipart) message.getContent();
             for (int i = multipart.getCount() - 1; i >= 0; i--) {
-                final BodyPart bodyPart = multipart.getBodyPart(i);
+                BodyPart bodyPart = multipart.getBodyPart(i);
                 String bodyPartContentType = bodyPart.getContentType();
                 if (isSimpleType(bodyPartContentType)) {
-                    stringBuffer.append(bodyPart.getContent().toString());
+                    this.stringBuffer.append(bodyPart.getContent().toString());
                 }
             }
         }
