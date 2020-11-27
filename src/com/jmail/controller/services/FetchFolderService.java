@@ -14,9 +14,9 @@ import java.util.List;
 
 public class FetchFolderService extends Service<Void> {
 
-    private Store store;
-    private EmailTreeItem<String> folderRoot;
-    private List<Folder> folderList;
+    private final Store store;
+    private final EmailTreeItem<String> folderRoot;
+    private final List<Folder> folderList;
 
     public FetchFolderService(Store store, EmailTreeItem<String> folderRoot, List<Folder> folderList) {
         this.store = store;

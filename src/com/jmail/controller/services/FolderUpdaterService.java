@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FolderUpdaterService extends Service {
 
-    private List<Folder> folderList;
+    private final List<Folder> folderList;
 
     public FolderUpdaterService(List<Folder> folderList) {
         this.folderList = folderList;

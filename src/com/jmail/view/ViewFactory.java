@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class ViewFactory {
 
     private EmailManager emailManager;
-    private ArrayList<Stage> activeStages;
+    private final ArrayList<Stage> activeStages;
     private boolean mainViewInitialized = false;
 
     // View options handling:

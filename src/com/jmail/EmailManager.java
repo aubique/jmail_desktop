@@ -15,10 +15,10 @@ public class EmailManager {
 
     //Folder handling:
     private final EmailTreeItem<String> folderRoot = new EmailTreeItem<>("");
+    private final FolderUpdaterService folderUpdaterService;
+    private final List<Folder> folderList = new ArrayList<>();
     private EmailMessage selectedMessage;
     private EmailTreeItem<String> selectedFolder;
-    private FolderUpdaterService folderUpdaterService;
-    private List<Folder> folderList = new ArrayList<>();
 
     public EmailManager() {
         folderUpdaterService = new FolderUpdaterService(folderList);

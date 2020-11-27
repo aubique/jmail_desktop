@@ -62,7 +62,7 @@ public class MainWindowController extends BaseController implements Initializabl
     @FXML
     void closeAction() {
         //FIXME refactor the spaghetti
-        final Stage stage = (Stage) emailsTreeView.getScene().getWindow();
+        final var stage = (Stage) emailsTreeView.getScene().getWindow();
         viewFactory.closeStage(stage);
     }
 
@@ -83,7 +83,7 @@ public class MainWindowController extends BaseController implements Initializabl
     }
 
     private void setUpMessageSelection() {
-        emailsTreeView.setOnMouseClicked(event -> {
+        emailsTableView.setOnMouseClicked(event -> {
             final EmailMessage emailMessage = emailsTableView.getSelectionModel().getSelectedItem();
             if (emailMessage != null) {
                 emailManager.setSelectedMessage(emailMessage);
@@ -123,7 +123,7 @@ public class MainWindowController extends BaseController implements Initializabl
 
     private void setUpFoldersSelection() {
         emailsTreeView.setOnMouseClicked(e -> {
-            EmailTreeItem<String> item = (EmailTreeItem<String>) emailsTreeView.getSelectionModel().getSelectedItem();
+            final var item = (EmailTreeItem<String>) emailsTreeView.getSelectionModel().getSelectedItem();
             if (item != null) {
                 emailManager.setSelectedFolder(item);
                 emailsTableView.setItems(item.getEmailMessages());

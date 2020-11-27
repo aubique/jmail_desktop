@@ -7,7 +7,7 @@ public abstract class BaseController {
 
     protected EmailManager emailManager;
     protected ViewFactory viewFactory;
-    private String fxmlName;
+    private final String fxmlName;
 
     public BaseController(EmailManager emailManager, ViewFactory viewFactory, String fxmlName) {
         this.emailManager = emailManager;

@@ -14,13 +14,23 @@ import java.io.IOException;
 public class MessageRendererService extends Service {
 
     private EmailMessage emailMessage;
-    private WebEngine webEngine;
-    private StringBuffer stringBuffer;
+    private final WebEngine webEngine;
+    private final StringBuffer stringBuffer;
 
     public MessageRendererService(WebEngine webEngine) {
         this.webEngine = webEngine;
         this.stringBuffer = new StringBuffer();
         this.setOnSucceeded(event -> displayMessage());
+    }
+
+    private static boolean isSimpleType(String contentType) {
+        return contentType.contains("TEXT/HTML") ||
+                contentType.contains("mixed") ||
+                contentType.contains("text");
+    }
+
+    private static boolean isMultipartType(String contentType) {
+        return contentType.contains("multipart");
     }
 
     public void setEmailMessage(EmailMessage emailMessage) {
@@ -62,15 +72,5 @@ public class MessageRendererService extends Service {
                 }
             }
         }
-    }
-
-    private boolean isSimpleType(String contentType) {
-        return contentType.contains("TEXT/HTML") ||
-                contentType.contains("mixed") ||
-                contentType.contains("text");
-    }
-
-    private boolean isMultipartType(String contentType) {
-        return contentType.contains("multipart");
     }
 }
