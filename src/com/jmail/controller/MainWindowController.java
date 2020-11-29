@@ -8,10 +8,7 @@ import com.jmail.model.SizeInteger;
 import com.jmail.view.ViewFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -49,6 +46,9 @@ public class MainWindowController extends BaseController implements Initializabl
 
     private MessageRendererService messageRendererService;
 
+    private MenuItem markUnreadMenuItem = new MenuItem("mark as unread");
+    private MenuItem deleteMessageMenuItem = new MenuItem("delete message");
+
     public MainWindowController(EmailManager emailManager, ViewFactory viewFactory, String fxmlName) {
         super(emailManager, viewFactory, fxmlName);
     }
@@ -80,6 +80,15 @@ public class MainWindowController extends BaseController implements Initializabl
         setUpBoldRows();
         setUpMessageRendererService();
         setUpMessageSelection();
+        setUpContextMenus();
+    }
+
+    private void setUpContextMenus() {
+        markUnreadMenuItem.setOnAction(event -> emailManager.setUnread());
+        deleteMessageMenuItem.setOnAction(event -> {
+            emailManager.deleteSelectedMessage();
+            emailWebView.getEngine().loadContent("");
+        });
     }
 
     private void setUpMessageSelection() {
@@ -137,6 +146,7 @@ public class MainWindowController extends BaseController implements Initializabl
         recipientCol.setCellValueFactory((new PropertyValueFactory<EmailMessage, String>("recipient")));
         sizeCol.setCellValueFactory((new PropertyValueFactory<EmailMessage, SizeInteger>("size")));
         dateCol.setCellValueFactory((new PropertyValueFactory<EmailMessage, Date>("date")));
+        emailsTableView.setContextMenu(new ContextMenu(markUnreadMenuItem, deleteMessageMenuItem));
     }
 
     private void setUpEmailsTreeView() {
