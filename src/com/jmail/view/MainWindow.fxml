@@ -16,6 +16,7 @@
                         <MenuItem mnemonicParsing="false" text="Open"/>
                         <MenuItem mnemonicParsing="false" onAction="#closeAction" text="Close"/>
                         <MenuItem mnemonicParsing="false" onAction="#addAccountAction" text="Add account"/>
+                        <MenuItem mnemonicParsing="false" onAction="#composeMessageAction" text="Compose message" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
