@@ -1,6 +1,7 @@
 package com.jmail.controller.services;
 
 import com.jmail.model.EmailTreeItem;
+import com.jmail.view.IconResolver;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
@@ -17,6 +18,7 @@ public class FetchFolderService extends Service<Void> {
     private final Store store;
     private final EmailTreeItem<String> folderRoot;
     private final List<Folder> folderList;
+    private final IconResolver iconResolver = new IconResolver();
 
     public FetchFolderService(Store store, EmailTreeItem<String> folderRoot, List<Folder> folderList) {
         this.store = store;
@@ -45,6 +47,7 @@ public class FetchFolderService extends Service<Void> {
         for (Folder folder : folders) {
             folderList.add(folder);
             EmailTreeItem<String> emailTreeItem = new EmailTreeItem<>(folder.getName());
+            emailTreeItem.setGraphic(iconResolver.getIconForFolder(folder.getName()));
             folderRoot.getChildren().add(emailTreeItem);
             folderRoot.setExpanded(true);
             fetchMessagesInFolder(folder, emailTreeItem);
