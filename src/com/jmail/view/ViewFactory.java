@@ -1,7 +1,10 @@
 package com.jmail.view;
 
 import com.jmail.EmailManager;
-import com.jmail.controller.*;
+import com.jmail.controller.BaseController;
+import com.jmail.controller.ComposeMessageController;
+import com.jmail.controller.LoginWindowController;
+import com.jmail.controller.MainWindowController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,8 +15,8 @@ import java.util.ArrayList;
 
 public class ViewFactory {
 
-    private EmailManager emailManager;
     private final ArrayList<Stage> activeStages;
+    private EmailManager emailManager;
     private boolean mainViewInitialized = false;
 
     // View options handling:
@@ -54,13 +57,13 @@ public class ViewFactory {
     }
 
     public void showLoginWindow() {
-        System.out.println("LOGIN window called");
+        //System.out.println("LOGIN window called");
         BaseController controller = new LoginWindowController(emailManager, this, "LoginWindow.fxml");
         initializeStage(controller);
     }
 
     public void showMainWindow() {
-        System.out.println("MAIN window called");
+        //System.out.println("MAIN window called");
         BaseController controller = new MainWindowController(emailManager, this, "MainWindow.fxml");
         initializeStage(controller);
 
@@ -68,7 +71,7 @@ public class ViewFactory {
     }
 
     public void showOptionsWindow() {
-        System.out.println("OPTIONS window called");
+        //System.out.println("OPTIONS window called");
         BaseController controller = new ComposeMessageController(emailManager, this, "OptionsWindow.fxml");
         initializeStage(controller);
     }
@@ -87,6 +90,7 @@ public class ViewFactory {
         }
 
         Scene scene = new Scene(parent);
+        updateStyle(scene);
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.show();
@@ -98,13 +102,19 @@ public class ViewFactory {
         activeStages.remove(stageToClose);
     }
 
-    public void updateStyles() {
+    public void updateAllStyles() {
         for (Stage stage : activeStages) {
             Scene scene = stage.getScene();
             scene.getStylesheets().clear();
             scene.getStylesheets().add(getClass().getResource(colorTheme.getCssPath(colorTheme)).toExternalForm());
             scene.getStylesheets().add(getClass().getResource(fontSize.getCssPath(fontSize)).toExternalForm());
         }
+    }
+
+    private void updateStyle(Scene scene) {
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(getClass().getResource(ColorTheme.getCssPath(colorTheme)).toExternalForm());
+        scene.getStylesheets().add(getClass().getResource(FontSize.getCssPath(fontSize)).toExternalForm());
     }
 
     public void showComposeMessageWindow() {

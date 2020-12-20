@@ -15,7 +15,6 @@ public class Launcher extends Application {
         final var viewFactory = new ViewFactory(new EmailManager());
         // FIXME: control the window
         viewFactory.showLoginWindow();
-        viewFactory.updateStyles();
     }
 
 }
