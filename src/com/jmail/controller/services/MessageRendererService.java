@@ -13,9 +13,9 @@ import java.io.IOException;
 
 public class MessageRendererService extends Service {
 
-    private EmailMessage emailMessage;
     private final WebEngine webEngine;
     private final StringBuffer stringBuffer;
+    private EmailMessage emailMessage;
 
     public MessageRendererService(WebEngine webEngine) {
         this.webEngine = webEngine;
@@ -64,12 +64,20 @@ public class MessageRendererService extends Service {
             this.stringBuffer.append(message.getContent().toString());
         else if (isMultipartType(contentType)) {
             final var multipart = (Multipart) message.getContent();
-            for (int i = multipart.getCount() - 1; i >= 0; i--) {
-                BodyPart bodyPart = multipart.getBodyPart(i);
-                String bodyPartContentType = bodyPart.getContentType();
-                if (isSimpleType(bodyPartContentType)) {
-                    this.stringBuffer.append(bodyPart.getContent().toString());
-                }
+            loadMultipart(multipart, stringBuffer);
+        }
+    }
+
+    private void loadMultipart(Multipart initMultipart, StringBuffer stringBuffer)
+            throws MessagingException, IOException {
+        for (int i = initMultipart.getCount() - 1; i >= 0; i--) {
+            final BodyPart bodyPart = initMultipart.getBodyPart(i);
+            String contentType = bodyPart.getContentType();
+            if (isSimpleType(contentType))
+                stringBuffer.append(bodyPart.getContent().toString());
+            else if (isMultipartType(contentType)) {
+                final var multipart = (Multipart) bodyPart.getContent();
+                loadMultipart(multipart, stringBuffer);
             }
         }
     }
