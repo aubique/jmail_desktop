@@ -9,6 +9,7 @@ import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.internet.MimeBodyPart;
 import java.io.IOException;
 
 public class MessageRendererService extends Service {
@@ -78,7 +79,15 @@ public class MessageRendererService extends Service {
             else if (isMultipartType(contentType)) {
                 final var multipart = (Multipart) bodyPart.getContent();
                 loadMultipart(multipart, stringBuffer);
+            } else if (!isTextPlain(contentType)) {
+                // get the attachments:
+                final var mimeBodyPart = (MimeBodyPart) bodyPart;
+                emailMessage.addAttachment(mimeBodyPart);
             }
         }
+    }
+
+    private boolean isTextPlain(String contentType) {
+        return contentType.contains("TEXT/PLAIN");
     }
 }
