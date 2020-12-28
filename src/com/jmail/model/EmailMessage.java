@@ -74,4 +74,12 @@ public class EmailMessage {
             ex.printStackTrace();
         }
     }
+
+    public boolean hasAttachments() {
+        return hasAttachments;
+    }
+
+    public List<MimeBodyPart> getAttachmentList() {
+        return attachmentList;
+    }
 }
