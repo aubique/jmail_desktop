@@ -5,25 +5,33 @@ import com.jmail.model.EmailAccount;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Transport;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.File;
+import java.util.List;
 
 public class EmailSenderService extends Service<EmailSendingResult> {
 
-    private EmailAccount emailAccount;
-    private String subject;
-    private String recipient;
-    private String content;
+    private final EmailAccount emailAccount;
+    private final String subject;
+    private final String recipient;
+    private final String content;
+    private final List<File> attachments;
 
-    public EmailSenderService(EmailAccount emailAccount, String subject, String recipient, String content) {
+    public EmailSenderService(EmailAccount emailAccount, String subject, String recipient, String content, List<File> attachments) {
         this.emailAccount = emailAccount;
         this.subject = subject;
         this.recipient = recipient;
         this.content = content;
+        this.attachments = attachments;
     }
 
     @Override
@@ -38,12 +46,23 @@ public class EmailSenderService extends Service<EmailSendingResult> {
                     mimeMessage.addRecipients(Message.RecipientType.TO, recipient);
                     mimeMessage.setSubject(subject);
                     // Set the message content
-                    final var mimeMultipart = new MimeMultipart();
-                    final var mimeBodyPart = new MimeBodyPart();
-                    mimeBodyPart.setContent(content, "text/html");
-                    mimeMultipart.addBodyPart(mimeBodyPart);
-                    mimeMessage.setContent(mimeMultipart);
-                    // Sending the message
+                    final Multipart multipart = new MimeMultipart();
+                    final MimeBodyPart messageBodyPart = new MimeBodyPart();
+                    messageBodyPart.setContent(content, "text/html");
+                    multipart.addBodyPart(messageBodyPart);
+                    mimeMessage.setContent(multipart);
+
+                    // Adding attachment:
+                    if (attachments.size() > 0)
+                        for (File file : attachments) {
+                            final MimeBodyPart mbp = new MimeBodyPart();
+                            final DataSource source = new FileDataSource(file.getAbsolutePath());
+                            mbp.setDataHandler(new DataHandler(source));
+                            mbp.setFileName(file.getName());
+                            multipart.addBodyPart(mbp);
+                        }
+
+                    // Sending the message:
                     final Transport transport = emailAccount.getSession().getTransport();
                     transport.connect(
                             emailAccount.getProperties().getProperty("outgoingHost"),
